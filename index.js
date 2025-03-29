@@ -1,20 +1,19 @@
 const express=require("express");
-
-
 const dotenv=require("dotenv");
 const connectDB = require("./connection");
 const taskRoutes=require("./routes/taskRoutes");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
+const  cors=require("cors");
+const userRoutes=require("./routes/userRoutes");
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// Connect to MongoDB
 connectDB();
-
-
-
-app.use(express.json());
 
 // Task 1
 // app.get("/Server",(req,res)=>{
@@ -23,7 +22,18 @@ app.use(express.json());
 //     });
 // });
 
+// Middleware
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors({ origin: "http://localhost:8080", credentials: true }));
+
+
+
 app.use("/api",taskRoutes);
+// Routes
+app.use("/api/users", userRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
